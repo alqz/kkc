@@ -1,45 +1,47 @@
-# 経県値 KKC
+# KKC
 
-Interactive map of Japan's 47 prefectures, color-coded by how deeply you've visited each one. Static HTML/CSS/JS — no build tools, no dependencies.
+Interactive map for tracking visits to Japan's 47 prefectures (or USA's 50 states), color-coded by experience level. Static HTML/CSS/JS — no build tools, no dependencies. Also available as a [USA version](https://alqz.github.io/kkc/usa.html).
 
 [Try it live](https://alqz.github.io/kkc/) | [Example colored map](https://alqz.github.io/kkc/index.html?d=54440010412353124014414014444400141000040000000)
 
 ## Levels
 
-| Color | Label | Meaning | Points |
-|-------|-------|---------|--------|
-| White | 未踏 | Never been | 0 |
-| Blue | 通過 | Passed through | 1 |
-| Green | 接地 | Brief stop | 2 |
-| Yellow | 散策 | Walked around | 3 |
-| Orange | 宿泊 | Stayed overnight | 4 |
-| Red | 長期滞在 | Long stay (2 weeks+) | 5 |
-| Purple | 居住 | Lived there (6 months+) | 6 |
+| Level | Japanese | English | Points |
+|-------|----------|---------|--------|
+| 0 | 未踏 | Never been | 0 |
+| 1 | 通過 | Passed through | 1 |
+| 2 | 接地 | Set foot on | 2 |
+| 3 | 訪問 | Walked around | 3 |
+| 4 | 宿泊 | Stayed overnight | 4 |
+| 5 | 長期滞在 | Extended stay (2w+) | 5 |
+| 6 | 居住 | Lived there (6m+) | 6 |
 
-Max score: 282 (47 × 6).
+Max score: 282 (47 × 6) for Japan, 300 (50 × 6) for USA.
 
 ## Usage
 
-Open `index.html` in a browser. Click a prefecture to set its level. Zoom and pan with scroll wheel / drag.
+Open `index.html` (Japan) or `usa.html` (USA) in a browser. Click a region to set its level. Zoom with scroll wheel or pinch, pan by dragging.
 
-State persists in localStorage. Share via URL: `?d=00000000000000000000000000000000000000000000000` (47 digits, one per prefecture).
+State persists in localStorage and the URL. Share via `?d=` parameter — a raw digit string (one digit per region in code order). No base64 or compression.
 
-## Dev Notes
+## Architecture
 
-**Map centering.** The SVG viewBox is `0 0 1537 1760` (full map bounds). On load, we set a tighter initial viewBox `200 150 1100 1100` to center on Honshu. Zoom/pan manipulates the viewBox directly — no CSS transforms.
+- **`kkc.js`** — Shared engine. Handles state, rendering, modals, tooltips, zoom/pan, and image export. Configured via `initKKC(cfg)`.
+- **`app.js`** — Japan config (47 prefectures, JIS codes 1–47).
+- **`usa.js`** — USA config (50 states, alphabetical codes 1–50).
+- **`style.css`** — CSS variables and SVG interaction styles that can't be expressed as Tailwind utilities.
+- **`index.html` / `usa.html`** — SVG map geometry and HTML shell.
 
-**Gap fix.** Adjacent prefectures leave hairline gaps where three borders meet. `paint-order: stroke fill` with `stroke-width: 1.5` draws the stroke behind the fill, so neighboring strokes overlap and cover the gaps.
+## Dev notes
 
-**Drag tracking.** The scale factor (viewBox units per screen pixel) is captured once at mousedown and reused for all mousemove events. Recalculating from `getBoundingClientRect()` each frame causes lag because the rect updates asynchronously.
+**ViewBox zoom/pan.** Zoom and pan manipulate the SVG `viewBox` directly — no CSS transforms. The scale factor is captured once at mousedown/touchstart and reused for all move events to avoid async lag from `getBoundingClientRect()`.
 
-**Pan limits.** `clampViewBox()` restricts panning so at least 50% of the map remains visible in each axis.
+**Gap fix.** `paint-order: stroke fill` with `stroke-width: 1.2` draws strokes behind fills, so neighboring region strokes overlap and cover hairline gaps at triple borders.
 
-**Design system.** One text color (`--text`), one border color (`--border`), one border radius (`--radius`), three font sizes (`--font-s`, `--font-m`, `--font-l`). No shadows, no bold/light weights, `system-ui` font.
+**Pan limits.** `clampViewBox()` keeps at least 50% of the map visible in each axis.
 
-**Share encoding.** The `?d=` parameter is a raw 47-digit string (one digit per prefecture, codes 1–47 in JIS order). No base64 or compression — human-readable and easy to debug.
-
-**Geographic accuracy.** Map geometry from PA4KEV/japan-vector-map places Okinawa and Kagoshima's islands at their true geographic positions (not as insets).
+**Image export.** Clones the SVG, inlines all strokes (CSS doesn't survive serialization), renders to a 1080×1350 canvas with title, score, and legend. Colors are read from CSS variables at export time.
 
 ## Credits
 
-Map geometry from [PA4KEV/japan-vector-map](https://github.com/PA4KEV/japan-vector-map) (MIT).
+Japan map geometry from [PA4KEV/japan-vector-map](https://github.com/PA4KEV/japan-vector-map) (MIT).

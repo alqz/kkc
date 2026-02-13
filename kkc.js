@@ -393,6 +393,53 @@ function initKKC(cfg) {
     img.src = url;
   }
 
+  function setupOverlays() {
+    // Close any open modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.show').forEach(el => el.classList.remove('show'));
+      }
+    });
+
+    // Close modals on backdrop click
+    ['modalOverlay', 'shareOverlay', 'aboutOverlay'].forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        if (e.target.id === id) e.target.classList.remove('show');
+      });
+    });
+  }
+
+  function setupButtons() {
+    document.getElementById('btnShare').addEventListener('click', showShareModal);
+
+    document.getElementById('btnAbout').addEventListener('click', () => {
+      document.getElementById('aboutOverlay').classList.add('show');
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      if (confirm(clearPrompt)) {
+        window.history.pushState({}, '', window.location.pathname);
+        for (let i = 1; i <= count; i++) state[i] = 0;
+        updateAll();
+      }
+    });
+
+    // Populate about modal
+    const linksHtml = moreLinks.map(l => `<a class="${BTN_DEFAULT}" href="${l.href}">${l.label}</a>`).join('');
+    document.getElementById('aboutModal').innerHTML = `
+      <h3 class="text-l font-semibold mb-xs">More</h3>
+      ${linksHtml ? `<div class="flex flex-wrap gap-s my-m">${linksHtml}</div>` : ''}
+      <div>
+        <p class="text-s leading-relaxed text-text-secondary mb-m">
+          I made this because the trademarked 経県値 (keikenchi) tool has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes it hard to remove logos or inspect the map. It's filled with ads (4+ per page) and its design makes sure you view them.
+        </p>
+        <p class="text-s leading-relaxed text-text-secondary">
+          This version is completely free to use and free of ads. It's open source. GitHub Pages are always static pages, so no login and no backend processing. The URL is encoded plainly where each region is a digit. The map is an SVG right in the HTML — anyone can inspect it or copy it.
+        </p>
+      </div>
+      `;
+  }
+
   // Init
   loadState();
   colorMap();
@@ -400,47 +447,9 @@ function initKKC(cfg) {
   updateScore();
   setupTooltip();
   setupZoomPan();
+  setupOverlays();
+  setupButtons();
 
-  // Close any open modal on Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-overlay.show').forEach(el => el.classList.remove('show'));
-    }
-  });
-
-  document.getElementById('modalOverlay').addEventListener('click', (e) => {
-    if (e.target.id === 'modalOverlay') e.target.classList.remove('show');
-  });
-  document.getElementById('shareOverlay').addEventListener('click', (e) => {
-    if (e.target.id === 'shareOverlay') e.target.classList.remove('show');
-  });
-  document.getElementById('btnShare').addEventListener('click', showShareModal);
-  const linksHtml = moreLinks.map(l => `<a class="${BTN_DEFAULT}" href="${l.href}">${l.label}</a>`).join('');
-  document.getElementById('aboutModal').innerHTML = `
-    <h3 class="text-l font-semibold mb-xs">More</h3>
-    ${linksHtml ? `<div class="flex flex-wrap gap-s my-m">${linksHtml}</div>` : ''}
-    <div>
-      <p class="text-s leading-relaxed text-text-secondary mb-m">
-        I made this because the trademarked 経県値 (keikenchi) tool has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes it hard to remove logos or inspect the map. It's filled with ads (4+ per page) and its design makes sure you view them.
-      </p>
-      <p class="text-s leading-relaxed text-text-secondary">
-        This version is completely free to use and free of ads. It's open source. GitHub Pages are always static pages, so no login and no backend processing. The URL is encoded plainly where each region is a digit. The map is an SVG right in the HTML — anyone can inspect it or copy it.
-      </p>
-    </div>
-    `;
-  document.getElementById('btnAbout').addEventListener('click', () => {
-    document.getElementById('aboutOverlay').classList.add('show');
-  });
-  document.getElementById('aboutOverlay').addEventListener('click', (e) => {
-    if (e.target.id === 'aboutOverlay') e.target.classList.remove('show');
-  });
-  document.getElementById('btnReset').addEventListener('click', () => {
-    if (confirm(clearPrompt)) {
-      window.history.pushState({}, '', window.location.pathname);
-      for (let i = 1; i <= count; i++) state[i] = 0;
-      updateAll();
-    }
-  });
   window.addEventListener('popstate', () => {
     loadState();
     colorMap();
