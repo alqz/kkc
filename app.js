@@ -200,15 +200,6 @@ function setupZoomPan() {
   const MIN_ZOOM = 0.5;
   const MAX_ZOOM = 10;
 
-  // Restore saved view
-  const savedVB = localStorage.getItem('kkc-viewbox');
-  if (savedVB) {
-    try {
-      const s = JSON.parse(savedVB);
-      if (s.x != null) { vb.x = s.x; vb.y = s.y; vb.w = s.w; vb.h = s.h; }
-    } catch(e) {}
-  }
-
   function clampViewBox() {
     vb.x = Math.max(fullVB.x - vb.w * 0.5, Math.min(fullVB.x + fullVB.w - vb.w * 0.5, vb.x));
     vb.y = Math.max(fullVB.y - vb.h * 0.5, Math.min(fullVB.y + fullVB.h - vb.h * 0.5, vb.y));
@@ -217,7 +208,6 @@ function setupZoomPan() {
   function applyViewBox() {
     clampViewBox();
     svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
-    localStorage.setItem('kkc-viewbox', JSON.stringify(vb));
   }
 
   applyViewBox();
