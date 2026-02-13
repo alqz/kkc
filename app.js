@@ -53,7 +53,7 @@ initKKC({
   shareName: '経県値 map',
   clearPrompt: 'Clear all prefectures?',
   formatName: (r) => `${r.name} / ${r.en}`,
-  formatLabel: (l) => `${l.label}<small>${l.points} points</small>`,
+  formatLabel: (l) => `${l.label}<small class="block text-s font-normal text-text-secondary mt-[1px]">${l.points} points</small>`,
   legendLabel: (l) => l.label,
   title: '経県値',
   moreLinks: [{label: 'USA Version', href: 'usa.html'}],

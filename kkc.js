@@ -8,6 +8,11 @@ const LEVELS = [
   { label: 'Lived there (6m+)', color: '#8e24aa', points: 6 },
 ];
 
+// Tailwind class sets for button variants
+const BTN_BASE = 'inline-flex items-center justify-center font-sans text-s font-medium leading-none text-text whitespace-nowrap no-underline rounded px-l py-s cursor-pointer transition-all duration-100 focus-visible:outline-2 focus-visible:outline-[#6b8aed] focus-visible:outline-offset-2';
+const BTN_MODAL = `${BTN_BASE} bg-bg border border-border hover:bg-border-light active:bg-border active:scale-[0.97]`;
+const BTN_DEFAULT = `${BTN_BASE} bg-bg border border-border hover:bg-border-light hover:border-border active:bg-border active:scale-[0.97]`;
+
 function initKKC(cfg) {
   const { regions, count, storageKey, shareName, clearPrompt,
           formatName, formatLabel, legendLabel, fullVB, initVB, title,
@@ -55,7 +60,7 @@ function initKKC(cfg) {
   function renderLegend() {
     let html = '';
     LEVELS.forEach(l => {
-      html += `<div class="legend-chip"><div class="swatch" style="background:${l.color}"></div>${legendLabel(l)}</div>`;
+      html += `<div class="flex items-center gap-s text-s whitespace-nowrap"><div class="w-[14px] h-[14px] rounded-s border-[1.5px] border-border shrink-0" style="background:${l.color}"></div>${legendLabel(l)}</div>`;
     });
     document.getElementById('legendBar').innerHTML = html;
   }
@@ -74,14 +79,14 @@ function initKKC(cfg) {
     const region = regions.find(r => r.code === code);
     if (!region) return;
     const current = state[code];
-    let html = `<h3>${formatName(region)}</h3><div class="modal-sub">Select your experience level</div>`;
+    let html = `<h3 class="text-l font-semibold mb-xs">${formatName(region)}</h3><div class="text-s text-text-secondary mb-m">Select your experience level</div>`;
     LEVELS.forEach((l, i) => {
-      html += `<div class="modal-option${i === current ? ' selected' : ''}" data-level="${i}">
-        <div class="mo-swatch" style="background:${l.color}"></div>
-        <div class="mo-label">${formatLabel(l)}</div>
+      const sel = i === current ? ' bg-selected-bg border-selected-border' : ' border-transparent';
+      html += `<div class="modal-option flex items-center gap-m px-m py-s mt-xs rounded cursor-pointer transition-colors duration-100 border hover:bg-black/[0.06] hover:border-border-light min-h-[40px]${sel}" data-level="${i}">
+        <div class="w-[22px] h-[22px] rounded-s shrink-0 border-[1.5px] border-border" style="background:${l.color}"></div>
+        <div class="text-m font-medium">${formatLabel(l)}</div>
       </div>`;
     });
-    html += `<div class="modal-actions"><button class="btn btn-close" id="btnCloseModal">Close</button></div>`;
     const modal = document.getElementById('modal');
     modal.innerHTML = html;
     document.getElementById('modalOverlay').classList.add('show');
@@ -93,21 +98,17 @@ function initKKC(cfg) {
         updateAll();
       });
     });
-    document.getElementById('btnCloseModal').addEventListener('click', () => {
-      document.getElementById('modalOverlay').classList.remove('show');
-    });
   }
 
   function showShareModal() {
     const url = window.location.origin + window.location.pathname + '?d=' + encodeState();
     document.getElementById('shareModal').innerHTML = `
-      <h3>Share Your Map</h3>
-      <div class="modal-sub">Copy the URL or download an image to share your ${shareName}</div>
-      <input class="share-url" id="shareUrl" value="${url}" readonly>
-      <div class="modal-actions">
-        <button class="btn" id="btnCopy">Copy URL</button>
-        <button class="btn" id="btnDownloadImg">Download Image</button>
-        <button class="btn btn-close" id="btnCloseShare">Close</button>
+      <h3 class="text-l font-semibold mb-xs">Share Your Map</h3>
+      <div class="text-s text-text-secondary mb-m">Copy the URL or download an image to share your ${shareName}</div>
+      <input class="block w-full px-m py-s border border-border-light bg-bg text-text rounded text-s font-sans focus:outline-2 focus:outline-[#6b8aed] focus:-outline-offset-1" id="shareUrl" value="${url}" readonly>
+      <div class="flex gap-s mt-m">
+        <button class="${BTN_MODAL} flex-1" id="btnCopy">Copy URL</button>
+        <button class="${BTN_MODAL} flex-1" id="btnDownloadImg">Download Image</button>
       </div>`;
     document.getElementById('shareOverlay').classList.add('show');
 
@@ -120,9 +121,6 @@ function initKKC(cfg) {
     document.getElementById('btnDownloadImg').addEventListener('click', () => {
       document.getElementById('shareOverlay').classList.remove('show');
       downloadImage();
-    });
-    document.getElementById('btnCloseShare').addEventListener('click', () => {
-      document.getElementById('shareOverlay').classList.remove('show');
     });
   }
 
@@ -141,7 +139,7 @@ function initKKC(cfg) {
         const l = LEVELS[state[i]];
         tooltipName.textContent = formatName(region);
         tooltipLevel.textContent = `${l.label} — ${l.points} points`;
-        tooltip.classList.add('show');
+        tooltip.classList.remove('hidden');
       });
       g.addEventListener('mousemove', (e) => {
         let x = e.clientX + 16;
@@ -153,7 +151,7 @@ function initKKC(cfg) {
         tooltip.style.left = x + 'px';
         tooltip.style.top = y + 'px';
       });
-      g.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+      g.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
       g.addEventListener('click', () => showModal(i));
     }
   }
@@ -409,26 +407,21 @@ function initKKC(cfg) {
     if (e.target.id === 'shareOverlay') e.target.classList.remove('show');
   });
   document.getElementById('btnShare').addEventListener('click', showShareModal);
-  const linksHtml = moreLinks.map(l => `<a class="btn" href="${l.href}">${l.label}</a>`).join('');
+  const linksHtml = moreLinks.map(l => `<a class="${BTN_DEFAULT}" href="${l.href}">${l.label}</a>`).join('');
   document.getElementById('aboutModal').innerHTML = `
-    <h3>More</h3>
-    ${linksHtml ? `<div class="more-links">${linksHtml}</div>` : ''}
-    <div class="more-about">
-      <p class="about-text">
+    <h3 class="text-l font-semibold mb-xs">More</h3>
+    ${linksHtml ? `<div class="flex flex-wrap gap-s my-m">${linksHtml}</div>` : ''}
+    <div>
+      <p class="text-s leading-relaxed text-text-secondary mb-m">
         I made this because one certain KKC tool (which shall not be named) has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes the map image non-interactive so nothing can be easily saved or reused. It has been designed to make sure you stay on the site and view ads.
       </p>
-      <p class="about-text">
+      <p class="text-s leading-relaxed text-text-secondary">
         This version is completely free. It's open source. GitHub Pages are always static pages. The URL is encoded plainly where each region is a digit. The map is an SVG right in the HTML — anyone can inspect it or copy it.
       </p>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-close" id="btnCloseAbout">Close</button>
-    </div>`;
+    `;
   document.getElementById('btnAbout').addEventListener('click', () => {
     document.getElementById('aboutOverlay').classList.add('show');
-  });
-  document.getElementById('btnCloseAbout').addEventListener('click', () => {
-    document.getElementById('aboutOverlay').classList.remove('show');
   });
   document.getElementById('aboutOverlay').addEventListener('click', (e) => {
     if (e.target.id === 'aboutOverlay') e.target.classList.remove('show');

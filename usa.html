@@ -5,18 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KKC — USA</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="tailwind.config.js"></script>
 </head>
-<body>
+<body class="font-sans text-m leading-[1.4] bg-bg text-text h-dvh overflow-hidden relative antialiased">
 
-<header class="glass">
-  <h1>KKC USA</h1>
-  <div class="score-bar">
-    <span class="score-val" id="totalScore">0</span>
+<header class="fixed top-l left-l z-10 px-l py-m max-w-[45vw] bg-white/80 backdrop-blur-[12px] border border-white/50 rounded shadow-[0_1px_4px_rgba(0,0,0,0.06),0_2px_12px_rgba(0,0,0,0.04)] max-[600px]:top-s max-[600px]:left-s max-[600px]:px-m max-[600px]:py-s">
+  <h1 class="text-l font-semibold tracking-tight max-[600px]:text-[15px]">KKC USA</h1>
+  <div class="flex items-baseline gap-xs mt-[2px] text-m text-text-secondary">
+    <span class="text-l font-semibold text-text max-[600px]:text-[15px]" id="totalScore">0</span>
     <span>/ 300</span>
   </div>
 </header>
 
-<div class="map-container" id="mapContainer">
+<div class="map-container w-screen h-dvh overflow-hidden" id="mapContainer">
   <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg">
 
   <g data-code="1" fill="#ffffff" stroke="#666" stroke-width="1" stroke-linejoin="round">
@@ -223,29 +225,29 @@
   </svg>
 </div>
 
-<div class="legend-bar glass" id="legendBar"></div>
+<div class="fixed top-l right-l z-10 px-l py-m flex flex-col gap-xs max-h-[calc(100dvh-32px)] max-w-[45vw] overflow-y-auto bg-white/80 backdrop-blur-[12px] border border-white/50 rounded shadow-[0_1px_4px_rgba(0,0,0,0.06),0_2px_12px_rgba(0,0,0,0.04)] max-[600px]:top-s max-[600px]:right-s max-[600px]:px-m max-[600px]:py-s" id="legendBar"></div>
 
-<div class="controls">
-  <button class="btn glass" id="btnResetZoom">Reset View</button>
-  <button class="btn glass" id="btnShare">Share</button>
-  <button class="btn glass" id="btnReset">Clear Map</button>
-  <button class="btn glass" id="btnAbout">More</button>
+<div class="fixed bottom-l left-1/2 -translate-x-1/2 z-10 flex flex-wrap justify-center gap-s max-w-[calc(100vw-32px)] max-[600px]:bottom-s max-[600px]:px-s">
+  <button class="inline-flex items-center justify-center font-sans text-s font-medium leading-none text-text whitespace-nowrap no-underline rounded px-l py-s cursor-pointer transition-all duration-100 bg-white/80 backdrop-blur-[12px] border border-white/50 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_2px_12px_rgba(0,0,0,0.04)] hover:bg-white/95 active:bg-white active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-[#6b8aed] focus-visible:outline-offset-2" id="btnResetZoom">Reset View</button>
+  <button class="inline-flex items-center justify-center font-sans text-s font-medium leading-none text-text whitespace-nowrap no-underline rounded px-l py-s cursor-pointer transition-all duration-100 bg-white/80 backdrop-blur-[12px] border border-white/50 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_2px_12px_rgba(0,0,0,0.04)] hover:bg-white/95 active:bg-white active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-[#6b8aed] focus-visible:outline-offset-2" id="btnShare">Share</button>
+  <button class="inline-flex items-center justify-center font-sans text-s font-medium leading-none text-text whitespace-nowrap no-underline rounded px-l py-s cursor-pointer transition-all duration-100 bg-white/80 backdrop-blur-[12px] border border-white/50 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_2px_12px_rgba(0,0,0,0.04)] hover:bg-white/95 active:bg-white active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-[#6b8aed] focus-visible:outline-offset-2" id="btnReset">Clear Map</button>
+  <button class="inline-flex items-center justify-center font-sans text-s font-medium leading-none text-text whitespace-nowrap no-underline rounded px-l py-s cursor-pointer transition-all duration-100 bg-white/80 backdrop-blur-[12px] border border-white/50 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_2px_12px_rgba(0,0,0,0.04)] hover:bg-white/95 active:bg-white active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-[#6b8aed] focus-visible:outline-offset-2" id="btnAbout">More</button>
 </div>
 
-<div class="tooltip" id="tooltip">
-  <div class="tooltip-name" id="tooltipName"></div>
-  <div class="tooltip-level" id="tooltipLevel"></div>
+<div class="fixed bg-card border border-border-light rounded px-m py-s pointer-events-none z-[100] hidden min-w-[140px] max-w-[280px] shadow-sm" id="tooltip">
+  <div class="text-m font-medium mb-[2px]" id="tooltipName"></div>
+  <div class="text-s text-text-secondary" id="tooltipLevel"></div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modal"></div>
+<div class="modal-overlay bg-black/25 backdrop-blur-[3px] p-l" id="modalOverlay">
+  <div class="bg-card border border-border-light rounded p-xl w-full max-w-[360px] max-h-[calc(100dvh-32px)] overflow-y-auto shadow-[0_4px_24px_rgba(0,0,0,0.12)]" id="modal"></div>
 </div>
-<div class="modal-overlay" id="shareOverlay">
-  <div class="modal" id="shareModal"></div>
+<div class="modal-overlay bg-black/25 backdrop-blur-[3px] p-l" id="shareOverlay">
+  <div class="bg-card border border-border-light rounded p-xl w-full max-w-[360px] max-h-[calc(100dvh-32px)] overflow-y-auto shadow-[0_4px_24px_rgba(0,0,0,0.12)]" id="shareModal"></div>
 </div>
 
-<div class="modal-overlay" id="aboutOverlay">
-  <div class="modal" id="aboutModal"></div>
+<div class="modal-overlay bg-black/25 backdrop-blur-[3px] p-l" id="aboutOverlay">
+  <div class="bg-card border border-border-light rounded p-xl w-full max-w-[360px] max-h-[calc(100dvh-32px)] overflow-y-auto shadow-[0_4px_24px_rgba(0,0,0,0.12)]" id="aboutModal"></div>
 </div>
 
 <script src="kkc.js"></script>
