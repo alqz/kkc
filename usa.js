@@ -58,6 +58,8 @@ initKKC({
   formatName: (r) => `${r.name} (${r.abbr})`,
   formatLabel: (l) => `${l.label}<small>${l.points} points</small>`,
   legendLabel: (l) => l.label,
+  title: 'KKC USA',
+  moreLinks: [{label: 'Japan Version', href: 'index.html'}],
   fullVB: { x: 0, y: 0, w: 960, h: 600 },
   initVB: { x: 0, y: 0, w: 960, h: 600 },
 });

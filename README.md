@@ -13,8 +13,8 @@ Interactive map of Japan's 47 prefectures, color-coded by how deeply you've visi
 | Green | 接地 | Brief stop | 2 |
 | Yellow | 散策 | Walked around | 3 |
 | Orange | 宿泊 | Stayed overnight | 4 |
-| Red | 長期滞在 | Long stay | 5 |
-| Purple | 居住 | Lived there | 6 |
+| Red | 長期滞在 | Long stay (2 weeks+) | 5 |
+| Purple | 居住 | Lived there (6 months+) | 6 |
 
 Max score: 282 (47 × 6).
 

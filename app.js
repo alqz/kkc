@@ -55,6 +55,8 @@ initKKC({
   formatName: (r) => `${r.name} / ${r.en}`,
   formatLabel: (l) => `${l.label}<small>${l.points} points</small>`,
   legendLabel: (l) => l.label,
+  title: '経県値',
+  moreLinks: [{label: 'USA Version', href: 'usa.html'}],
   fullVB: { x: 0, y: 0, w: 1537, h: 1760 },
   initVB: { x: 200, y: 150, w: 1100, h: 1100 },
 });

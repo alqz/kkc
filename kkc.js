@@ -4,13 +4,14 @@ const LEVELS = [
   { label: 'Brief stop',        color: '#74c476', points: 2 },
   { label: 'Walked around',     color: '#fdd835', points: 3 },
   { label: 'Stayed overnight',  color: '#fb8c00', points: 4 },
-  { label: 'Long stay',         color: '#e53935', points: 5 },
-  { label: 'Lived there',       color: '#8e24aa', points: 6 },
+  { label: 'Long stay (2w+)',    color: '#e53935', points: 5 },
+  { label: 'Lived there (6m+)', color: '#8e24aa', points: 6 },
 ];
 
 function initKKC(cfg) {
   const { regions, count, storageKey, shareName, clearPrompt,
-          formatName, formatLabel, legendLabel, fullVB, initVB } = cfg;
+          formatName, formatLabel, legendLabel, fullVB, initVB, title,
+          moreLinks } = cfg;
 
   const state = {};
   regions.forEach(r => state[r.code] = 0);
@@ -80,6 +81,7 @@ function initKKC(cfg) {
         <div class="mo-label">${formatLabel(l)}</div>
       </div>`;
     });
+    html += `<div class="modal-actions"><button class="btn btn-close" id="btnCloseModal">Close</button></div>`;
     const modal = document.getElementById('modal');
     modal.innerHTML = html;
     document.getElementById('modalOverlay').classList.add('show');
@@ -91,17 +93,21 @@ function initKKC(cfg) {
         updateAll();
       });
     });
+    document.getElementById('btnCloseModal').addEventListener('click', () => {
+      document.getElementById('modalOverlay').classList.remove('show');
+    });
   }
 
   function showShareModal() {
     const url = window.location.origin + window.location.pathname + '?d=' + encodeState();
     document.getElementById('shareModal').innerHTML = `
       <h3>Share Your Map</h3>
-      <div class="modal-sub">Copy the URL below to share your ${shareName}</div>
+      <div class="modal-sub">Copy the URL or download an image to share your ${shareName}</div>
       <input class="share-url" id="shareUrl" value="${url}" readonly>
-      <div class="share-actions">
+      <div class="modal-actions">
         <button class="btn" id="btnCopy">Copy URL</button>
-        <button class="btn" id="btnCloseShare">Close</button>
+        <button class="btn" id="btnDownloadImg">Download Image</button>
+        <button class="btn btn-close" id="btnCloseShare">Close</button>
       </div>`;
     document.getElementById('shareOverlay').classList.add('show');
 
@@ -110,6 +116,10 @@ function initKKC(cfg) {
         document.getElementById('btnCopy').textContent = 'Copied!';
         setTimeout(() => { document.getElementById('btnCopy').textContent = 'Copy URL'; }, 1500);
       });
+    });
+    document.getElementById('btnDownloadImg').addEventListener('click', () => {
+      document.getElementById('shareOverlay').classList.remove('show');
+      downloadImage();
     });
     document.getElementById('btnCloseShare').addEventListener('click', () => {
       document.getElementById('shareOverlay').classList.remove('show');
@@ -125,7 +135,7 @@ function initKKC(cfg) {
     for (let i = 1; i <= count; i++) {
       const g = svg.querySelector(`g[data-code="${i}"]`);
       if (!g) continue;
-      const region = regions[i - 1];
+      const region = regions.find(r => r.code === i);
 
       g.addEventListener('mouseenter', () => {
         const l = LEVELS[state[i]];
@@ -134,8 +144,14 @@ function initKKC(cfg) {
         tooltip.classList.add('show');
       });
       g.addEventListener('mousemove', (e) => {
-        tooltip.style.left = (e.clientX + 16) + 'px';
-        tooltip.style.top = (e.clientY - 10) + 'px';
+        let x = e.clientX + 16;
+        let y = e.clientY - 10;
+        const rect = tooltip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth - 8) x = e.clientX - rect.width - 16;
+        if (y + rect.height > window.innerHeight - 8) y = e.clientY - rect.height - 10;
+        if (y < 8) y = 8;
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
       });
       g.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
       g.addEventListener('click', () => showModal(i));
@@ -264,6 +280,113 @@ function initKKC(cfg) {
     });
   }
 
+  function downloadImage() {
+    const W = 1080, H = 1350;
+    const pad = 50;
+    const topH = 80, botH = 80;
+    const mapY = topH, mapH = H - topH - botH;
+    const mapW = W - pad * 2;
+
+    // Read design tokens from CSS so the image stays in sync
+    const rootStyle = getComputedStyle(document.documentElement);
+    const imgBg = rootStyle.getPropertyValue('--bg').trim();
+    const imgText = rootStyle.getPropertyValue('--text').trim();
+    const imgBorder = rootStyle.getPropertyValue('--border').trim();
+
+    // Clone SVG with current colors
+    const svg = document.querySelector('#mapContainer svg').cloneNode(true);
+    svg.setAttribute('viewBox', `${fullVB.x} ${fullVB.y} ${fullVB.w} ${fullVB.h}`);
+    svg.removeAttribute('style');
+    svg.removeAttribute('class');
+    svg.setAttribute('width', fullVB.w);
+    svg.setAttribute('height', fullVB.h);
+
+    // Inline strokes so they survive serialization
+    svg.querySelectorAll('polygon, path').forEach(el => {
+      el.setAttribute('stroke', imgBorder);
+      el.setAttribute('stroke-width', '1.5');
+      el.style.cssText = '';
+    });
+
+    // Remove hover/transition styles
+    svg.querySelectorAll('g[data-code]').forEach(g => {
+      g.style.cssText = '';
+    });
+
+    const xml = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = imgBg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Draw map — fit within the map zone
+      const scaleX = mapW / fullVB.w;
+      const scaleY = mapH / fullVB.h;
+      const scale = Math.min(scaleX, scaleY);
+      const drawW = fullVB.w * scale;
+      const drawH = fullVB.h * scale;
+      const drawX = pad + (mapW - drawW) / 2;
+      const drawY = mapY + (mapH - drawH) / 2;
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      URL.revokeObjectURL(url);
+
+      // Title (top-left)
+      ctx.fillStyle = imgText;
+      ctx.font = 'bold 32px system-ui, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      ctx.fillText(title, pad, topH / 2);
+
+      // Score (top-right)
+      ctx.font = '24px system-ui, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`Score: ${getScore()}`, W - pad, topH / 2);
+
+      // Legend (bottom row)
+      const legendY = H - botH / 2;
+      const chipW = (W - pad * 2) / LEVELS.length;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.font = '16px system-ui, sans-serif';
+
+      LEVELS.forEach((l, i) => {
+        const x = pad + i * chipW;
+        // Swatch circle
+        ctx.beginPath();
+        ctx.arc(x + 10, legendY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = l.color;
+        ctx.fill();
+        ctx.strokeStyle = imgBorder;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        // Label
+        ctx.fillStyle = imgText;
+        ctx.fillText(l.label, x + 24, legendY);
+      });
+
+      // Download
+      canvas.toBlob((pngBlob) => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(pngBlob);
+        a.download = `${title.replace(/\s+/g, '-').toLowerCase()}-map.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      });
+    };
+
+    img.onerror = () => URL.revokeObjectURL(url);
+    img.src = url;
+  }
+
   // Init
   loadState();
   colorMap();
@@ -272,6 +395,13 @@ function initKKC(cfg) {
   setupTooltip();
   setupZoomPan();
 
+  // Close any open modal on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.show').forEach(el => el.classList.remove('show'));
+    }
+  });
+
   document.getElementById('modalOverlay').addEventListener('click', (e) => {
     if (e.target.id === 'modalOverlay') e.target.classList.remove('show');
   });
@@ -279,6 +409,21 @@ function initKKC(cfg) {
     if (e.target.id === 'shareOverlay') e.target.classList.remove('show');
   });
   document.getElementById('btnShare').addEventListener('click', showShareModal);
+  const linksHtml = moreLinks.map(l => `<a class="btn" href="${l.href}">${l.label}</a>`).join('');
+  document.getElementById('aboutModal').innerHTML = `
+    <h3>More</h3>
+    ${linksHtml ? `<div class="more-links">${linksHtml}</div>` : ''}
+    <div class="more-about">
+      <p class="about-text">
+        I made this because one certain KKC tool (which shall not be named) has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes the map image non-interactive so nothing can be easily saved or reused. It has been designed to make sure you stay on the site and view ads.
+      </p>
+      <p class="about-text">
+        This version is completely free. It's open source. GitHub Pages are always static pages. The URL is encoded plainly where each region is a digit. The map is an SVG right in the HTML — anyone can inspect it or copy it.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-close" id="btnCloseAbout">Close</button>
+    </div>`;
   document.getElementById('btnAbout').addEventListener('click', () => {
     document.getElementById('aboutOverlay').classList.add('show');
   });
