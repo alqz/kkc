@@ -1,11 +1,11 @@
 const LEVELS = [
-  { label: 'Never been',        color: '#ffffff', points: 0 },
-  { label: 'Passed through',    color: '#6baed6', points: 1 },
-  { label: 'Brief stop',        color: '#74c476', points: 2 },
-  { label: 'Walked around',     color: '#fdd835', points: 3 },
-  { label: 'Stayed overnight',  color: '#fb8c00', points: 4 },
-  { label: 'Long stay (2w+)',    color: '#e53935', points: 5 },
-  { label: 'Lived there (6m+)', color: '#8e24aa', points: 6 },
+  { label: 'Never been',        ja: '未踏',   color: '#ffffff', points: 0 },
+  { label: 'Passed through',    ja: '通過',   color: '#eaeae0', points: 1 },
+  { label: 'Brief stop',        ja: '降り立つ', color: '#d5c5ad', points: 2 },
+  { label: 'Walked around',     ja: '歩いた', color: '#ca8371', points: 3 },
+  { label: 'Stayed overnight',  ja: '泊まった', color: '#c2324f', points: 4 },
+  { label: 'Long stay (2w+)',    ja: '長期滞在', color: '#951863', points: 5 },
+  { label: 'Lived there (6m+)', ja: '居住',   color: '#5e075e', points: 6 },
 ];
 
 // Tailwind class sets for button variants
@@ -22,7 +22,10 @@ function initKKC(cfg) {
   regions.forEach(r => state[r.code] = 0);
 
   function saveState() {
-    localStorage.setItem(storageKey, encodeState());
+    const encoded = encodeState();
+    localStorage.setItem(storageKey, encoded);
+    const url = window.location.pathname + '?d=' + encoded;
+    window.history.replaceState({}, '', url);
   }
 
   function loadState() {
@@ -79,7 +82,7 @@ function initKKC(cfg) {
     const region = regions.find(r => r.code === code);
     if (!region) return;
     const current = state[code];
-    let html = `<h3 class="text-l font-semibold mb-xs">${formatName(region)}</h3><div class="text-s text-text-secondary mb-m">Select your experience level</div>`;
+    let html = `<h3 class="text-l font-semibold mb-m">${formatName(region)}</h3>`;
     LEVELS.forEach((l, i) => {
       const sel = i === current ? ' bg-selected-bg border-selected-border' : ' border-transparent';
       html += `<div class="modal-option flex items-center gap-m px-m py-s mt-xs rounded cursor-pointer transition-colors duration-100 border hover:bg-black/[0.06] hover:border-border-light min-h-[40px]${sel}" data-level="${i}">
@@ -289,7 +292,8 @@ function initKKC(cfg) {
     const rootStyle = getComputedStyle(document.documentElement);
     const imgBg = rootStyle.getPropertyValue('--bg').trim();
     const imgText = rootStyle.getPropertyValue('--text').trim();
-    const imgBorder = rootStyle.getPropertyValue('--border').trim();
+    const imgBorder = rootStyle.getPropertyValue('--map-stroke').trim();
+    const imgMapBg = rootStyle.getPropertyValue('--map-bg').trim();
 
     // Clone SVG with current colors
     const svg = document.querySelector('#mapContainer svg').cloneNode(true);
@@ -325,6 +329,10 @@ function initKKC(cfg) {
       // Background
       ctx.fillStyle = imgBg;
       ctx.fillRect(0, 0, W, H);
+
+      // Ocean background behind map
+      ctx.fillStyle = imgMapBg;
+      ctx.fillRect(pad, mapY, mapW, mapH);
 
       // Draw map — fit within the map zone
       const scaleX = mapW / fullVB.w;
@@ -428,10 +436,14 @@ function initKKC(cfg) {
   });
   document.getElementById('btnReset').addEventListener('click', () => {
     if (confirm(clearPrompt)) {
+      window.history.pushState({}, '', window.location.pathname);
       for (let i = 1; i <= count; i++) state[i] = 0;
       updateAll();
-      localStorage.removeItem(storageKey);
-      window.history.replaceState({}, '', window.location.pathname);
     }
+  });
+  window.addEventListener('popstate', () => {
+    loadState();
+    colorMap();
+    updateScore();
   });
 }

@@ -4,6 +4,8 @@
   --text: #2c2c2c;
   --border: #d0cec6;
   --border-light: #e0ded6;
+  --map-stroke: #868e98;
+  --map-bg: #cdd6e2;
 }
 
 /* ---- SVG map interactions (attribute selectors can't be Tailwind) ---- */
@@ -12,6 +14,7 @@
   height: 100%;
   display: block;
   cursor: grab;
+  background: var(--map-bg);
 }
 
 .map-container svg:active {
@@ -29,7 +32,7 @@
 
 .map-container svg g[data-code] polygon,
 .map-container svg g[data-code] path {
-  stroke: #d0cec6;
+  stroke: var(--map-stroke);
   stroke-width: 1.2;
   paint-order: stroke fill;
   transition: fill 0.2s ease;
