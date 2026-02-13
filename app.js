@@ -124,7 +124,7 @@ function showModal(code) {
   LEVELS.forEach((l, i) => {
     html += `<div class="modal-option${i === current ? ' selected' : ''}" data-level="${i}">
       <div class="mo-swatch" style="background:${l.color}"></div>
-      <div class="mo-label">${l.label}<small>${l.en} — ${l.points}pt</small></div>
+      <div class="mo-label">${l.label}<small>${l.en} — ${l.points} points</small></div>
     </div>`;
   });
   const modal = document.getElementById('modal');
@@ -177,7 +177,7 @@ function setupTooltip() {
     g.addEventListener('mouseenter', () => {
       const l = LEVELS[state[i]];
       tooltipName.textContent = `${pref.name} / ${pref.en}`;
-      tooltipLevel.textContent = `${l.label} (${l.en}) — ${l.points}pt`;
+      tooltipLevel.textContent = `${l.label} (${l.en}) — ${l.points} points`;
       tooltip.classList.add('show');
     });
     g.addEventListener('mousemove', (e) => {
