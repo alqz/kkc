@@ -26,7 +26,7 @@ State persists in localStorage and the URL. Share via `?d=` parameter — a raw 
 
 ## Architecture
 
-- **`kkc.js`** — Shared engine. Handles state, rendering, modals, tooltips, zoom/pan, and image export. Configured via `initKKC(cfg)`.
+- **`kkc.js`** — Shared engine. Handles state, rendering, modals, tooltips, and zoom/pan. Configured via `initKKC(cfg)`.
 - **`app.js`** — Japan config (47 prefectures, JIS codes 1–47).
 - **`usa.js`** — USA config (50 states, alphabetical codes 1–50).
 - **`style.css`** — CSS variables and SVG interaction styles that can't be expressed as Tailwind utilities.
@@ -39,8 +39,6 @@ State persists in localStorage and the URL. Share via `?d=` parameter — a raw 
 **Gap fix.** `paint-order: stroke fill` with `stroke-width: 1.2` draws strokes behind fills, so neighboring region strokes overlap and cover hairline gaps at triple borders.
 
 **Pan limits.** `clampViewBox()` keeps at least 50% of the map visible in each axis.
-
-**Image export.** Clones the SVG, inlines all strokes (CSS doesn't survive serialization), renders to a 1080×1350 canvas with title, score, and legend. Colors are read from CSS variables at export time.
 
 ## Credits
 

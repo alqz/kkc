@@ -15,7 +15,7 @@ const BTN_DEFAULT = `${BTN_BASE} bg-bg border border-border hover:bg-border-ligh
 
 function initKKC(cfg) {
   const { regions, count, storageKey, shareName, clearPrompt,
-          formatName, formatLabel, legendLabel, fullVB, initVB, title,
+          formatName, formatLabel, legendLabel, fullVB, initVB,
           moreLinks } = cfg;
 
   const state = {};
@@ -107,11 +107,10 @@ function initKKC(cfg) {
     const url = window.location.origin + window.location.pathname + '?d=' + encodeState();
     document.getElementById('shareModal').innerHTML = `
       <h3 class="text-l font-semibold mb-xs">Share Your Map</h3>
-      <div class="text-s text-text-secondary mb-m">Copy the URL or download an image to share your ${shareName}</div>
+      <div class="text-s text-text-secondary mb-m">Copy the URL to share your ${shareName}</div>
       <input class="block w-full px-m py-s border border-border-light bg-bg text-text rounded text-s font-sans focus:outline-2 focus:outline-[#6b8aed] focus:-outline-offset-1" id="shareUrl" value="${url}" readonly>
       <div class="flex gap-s mt-m">
         <button class="${BTN_MODAL} flex-1" id="btnCopy">Copy URL</button>
-        <button class="${BTN_MODAL} flex-1" id="btnDownloadImg">Download Image</button>
       </div>`;
     document.getElementById('shareOverlay').classList.add('show');
 
@@ -120,10 +119,6 @@ function initKKC(cfg) {
         document.getElementById('btnCopy').textContent = 'Copied!';
         setTimeout(() => { document.getElementById('btnCopy').textContent = 'Copy URL'; }, 1500);
       });
-    });
-    document.getElementById('btnDownloadImg').addEventListener('click', () => {
-      document.getElementById('shareOverlay').classList.remove('show');
-      downloadImage();
     });
   }
 
@@ -279,118 +274,6 @@ function initKKC(cfg) {
       vb.h = initVB.h;
       applyViewBox();
     });
-  }
-
-  function downloadImage() {
-    const W = 1080, H = 1350;
-    const pad = 50;
-    const topH = 80, botH = 80;
-    const mapY = topH, mapH = H - topH - botH;
-    const mapW = W - pad * 2;
-
-    // Read design tokens from CSS so the image stays in sync
-    const rootStyle = getComputedStyle(document.documentElement);
-    const imgBg = rootStyle.getPropertyValue('--bg').trim();
-    const imgText = rootStyle.getPropertyValue('--text').trim();
-    const imgBorder = rootStyle.getPropertyValue('--map-stroke').trim();
-    const imgMapBg = rootStyle.getPropertyValue('--map-bg').trim();
-
-    // Clone SVG with current colors
-    const svg = document.querySelector('#mapContainer svg').cloneNode(true);
-    svg.setAttribute('viewBox', `${fullVB.x} ${fullVB.y} ${fullVB.w} ${fullVB.h}`);
-    svg.removeAttribute('style');
-    svg.removeAttribute('class');
-    svg.setAttribute('width', fullVB.w);
-    svg.setAttribute('height', fullVB.h);
-
-    // Inline strokes so they survive serialization
-    svg.querySelectorAll('polygon, path').forEach(el => {
-      el.setAttribute('stroke', imgBorder);
-      el.setAttribute('stroke-width', '1.5');
-      el.style.cssText = '';
-    });
-
-    // Remove hover/transition styles
-    svg.querySelectorAll('g[data-code]').forEach(g => {
-      g.style.cssText = '';
-    });
-
-    const xml = new XMLSerializer().serializeToString(svg);
-    const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = W;
-      canvas.height = H;
-      const ctx = canvas.getContext('2d');
-
-      // Background
-      ctx.fillStyle = imgBg;
-      ctx.fillRect(0, 0, W, H);
-
-      // Ocean background behind map
-      ctx.fillStyle = imgMapBg;
-      ctx.fillRect(pad, mapY, mapW, mapH);
-
-      // Draw map — fit within the map zone
-      const scaleX = mapW / fullVB.w;
-      const scaleY = mapH / fullVB.h;
-      const scale = Math.min(scaleX, scaleY);
-      const drawW = fullVB.w * scale;
-      const drawH = fullVB.h * scale;
-      const drawX = pad + (mapW - drawW) / 2;
-      const drawY = mapY + (mapH - drawH) / 2;
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
-      URL.revokeObjectURL(url);
-
-      // Title (top-left)
-      ctx.fillStyle = imgText;
-      ctx.font = 'bold 32px system-ui, sans-serif';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'left';
-      ctx.fillText(title, pad, topH / 2);
-
-      // Score (top-right)
-      ctx.font = '24px system-ui, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(`Score: ${getScore()}`, W - pad, topH / 2);
-
-      // Legend (bottom row)
-      const legendY = H - botH / 2;
-      const chipW = (W - pad * 2) / LEVELS.length;
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.font = '16px system-ui, sans-serif';
-
-      LEVELS.forEach((l, i) => {
-        const x = pad + i * chipW;
-        // Swatch circle
-        ctx.beginPath();
-        ctx.arc(x + 10, legendY, 8, 0, Math.PI * 2);
-        ctx.fillStyle = l.color;
-        ctx.fill();
-        ctx.strokeStyle = imgBorder;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        // Label
-        ctx.fillStyle = imgText;
-        ctx.fillText(l.label, x + 24, legendY);
-      });
-
-      // Download
-      canvas.toBlob((pngBlob) => {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(pngBlob);
-        a.download = `${title.replace(/\s+/g, '-').toLowerCase()}-map.png`;
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-      });
-    };
-
-    img.onerror = () => URL.revokeObjectURL(url);
-    img.src = url;
   }
 
   function setupOverlays() {
