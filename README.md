@@ -2,7 +2,7 @@
 
 Interactive map of Japan's 47 prefectures, color-coded by how deeply you've visited each one. Static HTML/CSS/JS — no build tools, no dependencies.
 
-**[Try it live](https://alqz.github.io/kkc/)** · [Example](https://alqz.github.io/kkc/?d=40000003112434002440041004433400400000000000000)
+[Try it live](https://alqz.github.io/kkc/) | [Example colored map](https://alqz.github.io/kkc/index.html?d=54440010412353124014414014444400141000040000000)
 
 ## Levels
 

@@ -56,7 +56,7 @@ initKKC({
   formatLabel: (l) => `${l.ja} (${l.label})<small class="block text-s font-normal text-text-secondary mt-[1px]">${l.jaDesc} — ${l.points} points</small>`,
   legendLabel: (l) => l.label,
   title: 'KKC',
-  moreLinks: [{label: 'USA Version', href: 'usa.html'}],
+  moreLinks: [{label: 'USA version', href: 'usa.html'}],
   fullVB: { x: 0, y: 0, w: 1537, h: 1760 },
   initVB: { x: 200, y: 150, w: 1100, h: 1100 },
 });
