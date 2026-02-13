@@ -247,6 +247,7 @@
   <button class="btn" id="btnResetZoom">Reset View</button>
   <button class="btn" id="btnShare">Share</button>
   <button class="btn" id="btnReset">Clear Map</button>
+  <button class="btn" id="btnAbout">About</button>
 </div>
 
 <div class="tooltip" id="tooltip">
@@ -262,6 +263,22 @@
   <div class="modal" id="shareModal"></div>
 </div>
 
+<div class="modal-overlay" id="aboutOverlay">
+  <div class="modal" id="aboutModal">
+    <h3>About</h3>
+    <p class="about-text">
+      I made this because one certain KKC tool (which shall not be named) has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes the map image non-interactive so nothing can be easily saved or reused. It has been designed to make sure you stay on the site and view ads so it can make money.
+    </p>
+    <p class="about-text">
+      This version is the opposite. It's completely free. It's open source. GitHub Pages are always static pages. The URL is encoded plainly — just 47 digits you can read yourself. The map is an SVG right in the HTML — anyone can inspect it or copy it.
+    </p>
+    <div class="share-actions">
+      <button class="btn" id="btnCloseAbout">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="kkc.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

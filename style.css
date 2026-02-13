@@ -258,6 +258,12 @@ header h1 {
 
 .share-actions .btn { flex: 1; }
 
+.about-text {
+  font-size: var(--font-s);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   header { top: 8px; left: 8px; padding: 8px 12px; }
