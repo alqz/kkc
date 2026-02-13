@@ -132,6 +132,8 @@ function initKKC(cfg) {
       const g = svg.querySelector(`g[data-code="${i}"]`);
       if (!g) continue;
       const region = regions.find(r => r.code === i);
+      const svgTitle = g.querySelector('title');
+      if (svgTitle) svgTitle.remove();
 
       g.addEventListener('mouseenter', () => {
         const l = LEVELS[state[i]];
