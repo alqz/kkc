@@ -1,11 +1,11 @@
 const LEVELS = [
   { label: '未踏',     en: 'Never been',        color: '#ffffff', points: 0 },
   { label: '通過',     en: 'Passed through',     color: '#6baed6', points: 1 },
-  { label: '接地',     en: 'Touched ground',     color: '#74c476', points: 2 },
+  { label: '接地',     en: 'Brief stop',         color: '#74c476', points: 2 },
   { label: '散策',     en: 'Walked around',      color: '#fdd835', points: 3 },
   { label: '宿泊',     en: 'Stayed overnight',   color: '#fb8c00', points: 4 },
-  { label: '長期滞在', en: 'Stayed 3 weeks+',    color: '#e53935', points: 5 },
-  { label: '居住',     en: 'Stayed 6 months+',   color: '#8e24aa', points: 6 },
+  { label: '長期滞在', en: 'Long stay',          color: '#e53935', points: 5 },
+  { label: '居住',     en: 'Lived there',        color: '#8e24aa', points: 6 },
 ];
 
 const PREFECTURES = [
@@ -343,7 +343,7 @@ document.getElementById('shareOverlay').addEventListener('click', (e) => {
 });
 document.getElementById('btnShare').addEventListener('click', showShareModal);
 document.getElementById('btnReset').addEventListener('click', () => {
-  if (confirm('Reset all prefectures?')) {
+  if (confirm('Clear all prefectures?')) {
     for (let i = 1; i <= 47; i++) state[i] = 0;
     updateAll();
     localStorage.removeItem('kkc-state');

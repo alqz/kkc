@@ -2,7 +2,7 @@
 
 Interactive map of Japan's 47 prefectures, color-coded by how deeply you've visited each one. Static HTML/CSS/JS — no build tools, no dependencies.
 
-**[Try it live](https://alqz.github.io/kkc/)** · [Example](https://alqz.github.io/kkc/?d=31013200003564326040053210043330014335001230012)
+**[Try it live](https://alqz.github.io/kkc/)** · [Example](https://alqz.github.io/kkc/?d=40000003112434002440041004433400400000000000000)
 
 ## Levels
 
@@ -10,11 +10,11 @@ Interactive map of Japan's 47 prefectures, color-coded by how deeply you've visi
 |-------|-------|---------|--------|
 | White | 未踏 | Never been | 0 |
 | Blue | 通過 | Passed through | 1 |
-| Green | 接地 | Touched ground | 2 |
+| Green | 接地 | Brief stop | 2 |
 | Yellow | 散策 | Walked around | 3 |
 | Orange | 宿泊 | Stayed overnight | 4 |
-| Red | 長期滞在 | Stayed 3 weeks+ | 5 |
-| Purple | 居住 | Stayed 6 months+ | 6 |
+| Red | 長期滞在 | Long stay | 5 |
+| Purple | 居住 | Lived there | 6 |
 
 Max score: 282 (47 × 6).
 

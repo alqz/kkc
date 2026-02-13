@@ -4,7 +4,6 @@
   --bg: #eceae0;
   --card: #ffffff;
   --text: #2c2c2c;
-  --text-dim: #888;
   --border: #ccc;
   --radius: 8px;
   --font-s: 11px;
@@ -31,20 +30,17 @@ header {
   background: rgba(255,255,255,0.85);
   backdrop-filter: blur(8px);
   border-radius: var(--radius);
-  padding: 10px 16px;
+  padding: 10px 14px;
   border: 1px solid var(--border);
 }
 
 header h1 {
   font-size: var(--font-l);
-  font-weight: 700;
   letter-spacing: 2px;
 }
 
 header h1 span {
-  font-weight: 300;
   font-size: var(--font-s);
-  color: var(--text-dim);
   margin-left: 6px;
 }
 
@@ -54,13 +50,10 @@ header h1 span {
   gap: 6px;
   margin-top: 4px;
   font-size: var(--font-s);
-  color: var(--text-dim);
 }
 
 .score-bar .score-val {
   font-size: var(--font-l);
-  font-weight: 700;
-  color: var(--text);
 }
 
 /* Legend — floating top-right */
@@ -84,7 +77,6 @@ header h1 span {
   align-items: center;
   gap: 6px;
   font-size: var(--font-s);
-  color: var(--text-dim);
 }
 
 .legend-chip .swatch {
@@ -163,7 +155,7 @@ header h1 span {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 8px 12px;
+  padding: 10px 14px;
   pointer-events: none;
   z-index: 100;
   display: none;
@@ -174,13 +166,11 @@ header h1 span {
 
 .tooltip-name {
   font-size: var(--font-m);
-  font-weight: 600;
   margin-bottom: 2px;
 }
 
 .tooltip-level {
   font-size: var(--font-s);
-  color: var(--text-dim);
 }
 
 /* Modal */
@@ -213,7 +203,6 @@ header h1 span {
 
 .modal .modal-sub {
   font-size: var(--font-s);
-  color: var(--text-dim);
   margin-bottom: 14px;
 }
 
@@ -222,6 +211,7 @@ header h1 span {
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
+  margin-top: 4px;
   border-radius: var(--radius);
   cursor: pointer;
   transition: background 0.15s;
@@ -253,7 +243,6 @@ header h1 span {
 .modal-option .mo-label small {
   display: block;
   font-size: var(--font-s);
-  color: var(--text-dim);
 }
 
 /* Share modal */
