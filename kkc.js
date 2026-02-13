@@ -421,10 +421,10 @@ function initKKC(cfg) {
     ${linksHtml ? `<div class="flex flex-wrap gap-s my-m">${linksHtml}</div>` : ''}
     <div>
       <p class="text-s leading-relaxed text-text-secondary mb-m">
-        I made this because one certain KKC tool (which shall not be named) has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes the map image non-interactive so nothing can be easily saved or reused. It has been designed to make sure you stay on the site and view ads.
+        I made this because the trademarked 経県値 (keikenchi) tool has some backwards ideas. It obfuscates the share URL so only its own site can read it, and it makes it hard to remove logos or inspect the map. It's full of ads and its design makes sure you view them.
       </p>
       <p class="text-s leading-relaxed text-text-secondary">
-        This version is completely free. It's open source. GitHub Pages are always static pages. The URL is encoded plainly where each region is a digit. The map is an SVG right in the HTML — anyone can inspect it or copy it.
+        This version is completely free to use and free of ads. It's open source. GitHub Pages are always static pages, so no login and no backend processing. The URL is encoded plainly where each region is a digit. The map is an SVG right in the HTML — anyone can inspect it or copy it.
       </p>
     </div>
     `;
