@@ -1,20 +1,29 @@
-# KKC (経県値)
+# 経県値 KKC
 
-KKC, Keikenchi, or 経県値
+Interactive map of Japan's 47 prefectures, color-coded by how deeply you've visited each one. Static HTML/CSS/JS — no build tools, no dependencies.
 
-- The focus of the UI is a map of Japan, showing each prefecture and color-coding it based on how deeply one has visited.
-- It is important to make the map view very beautiful, as that's the whole point of this tool.
-- The color coding should go from white to purple, with the below meaning.
-- The user can edit the value for each prefecture
-- The user can export the map, so we need a way to encode the user input info
-- The URL can take a parameter which is the exported user input info, which would display the info on the map
+**[Try it live](https://alqz.github.io/kkc/)** · [Example](https://alqz.github.io/kkc/?d=31013200003564326040053210043330014335001230012)
 
-White: never been whatsoever
-Blue: passed through
-Green: touched ground
-Yellow: walked around
-Orange: stayed overnight
-Red: stayed 3 weeks or more
-Purple: stayed 6 months or more
+## Levels
 
-Please choose a beautiful palette for the above colors
+| Color | Label | Meaning | Points |
+|-------|-------|---------|--------|
+| White | 未踏 | Never been | 0 |
+| Blue | 通過 | Passed through | 1 |
+| Green | 接地 | Touched ground | 2 |
+| Yellow | 散策 | Walked around | 3 |
+| Orange | 宿泊 | Stayed overnight | 4 |
+| Red | 長期滞在 | Stayed 3 weeks+ | 5 |
+| Purple | 居住 | Stayed 6 months+ | 6 |
+
+Max score: 282 (47 × 6).
+
+## Usage
+
+Open `index.html` in a browser. Click a prefecture to set its level. Zoom and pan with scroll wheel / drag.
+
+State persists in localStorage. Share via URL: `?d=00000000000000000000000000000000000000000000000` (47 digits, one per prefecture).
+
+## Credits
+
+Map geometry from [PA4KEV/japan-vector-map](https://github.com/PA4KEV/japan-vector-map) (MIT).
