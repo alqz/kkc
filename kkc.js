@@ -1,11 +1,11 @@
 const LEVELS = [
-  { label: 'Never been',        ja: '未踏',   color: '#ffffff', points: 0 },
-  { label: 'Passed through',    ja: '通過',   color: '#eaeae0', points: 1 },
-  { label: 'Brief stop',        ja: '降り立つ', color: '#d5c5ad', points: 2 },
-  { label: 'Walked around',     ja: '歩いた', color: '#ca8371', points: 3 },
-  { label: 'Stayed overnight',  ja: '泊まった', color: '#c2324f', points: 4 },
-  { label: 'Long stay (2w+)',    ja: '長期滞在', color: '#951863', points: 5 },
-  { label: 'Lived there (6m+)', ja: '居住',   color: '#5e075e', points: 6 },
+  { label: 'Never been',        ja: '未踏', jaDesc: '行ってない',  color: '#ffffff', points: 0 },
+  { label: 'Passed through',    ja: '通過', jaDesc: '通過した',    color: '#eaeae0', points: 1 },
+  { label: 'Brief stop',        ja: '接地', jaDesc: '降り立った',  color: '#d5c5ad', points: 2 },
+  { label: 'Walked around',     ja: '訪問', jaDesc: '歩いた',      color: '#ca8371', points: 3 },
+  { label: 'Stayed overnight',  ja: '宿泊', jaDesc: '泊まった',    color: '#c2324f', points: 4 },
+  { label: 'Long stay (2w+)',   ja: '長期滞在', jaDesc: '2週間以上', color: '#951863', points: 5 },
+  { label: 'Lived there (6m+)', ja: '居住', jaDesc: '住んだ',      color: '#5e075e', points: 6 },
 ];
 
 // Tailwind class sets for button variants
